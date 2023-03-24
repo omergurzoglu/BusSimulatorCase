@@ -1,16 +1,13 @@
-
-
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Bus
+namespace Objects.Bus
 {
     public class BusController : MonoBehaviour
     {
         #region Fields
         
         [Header("Wheel References")]
-        
         [SerializeField] private WheelCollider[] allWheelColliders=new WheelCollider[4];
         [SerializeField] private WheelCollider[] frontWheelColliders=new WheelCollider[2];
         [SerializeField] private WheelCollider frontLeftWheel;
@@ -27,13 +24,14 @@ namespace Bus
         [SerializeField] private float decelerationForce;
         [SerializeField] private float maxSteerAngle=15f;
         
-        private float _currentSteerAngle = 0f;
-        private float _targetSteerAngle = 0f;
-        private const float steerSpeed = 5f;
+        private float _currentSteerAngle;
+        private float _targetSteerAngle;
+        private const float SteerSpeed = 5f;
         
-        private bool _acceleratePressed = false;
-        private bool _deceleratePressed = false;
-        private bool _reversePressed = false;
+        private bool _acceleratePressed;
+        private bool _deceleratePressed;
+        private bool _reversePressed;
+        public bool inBusStop;
         
         #endregion
 
@@ -44,7 +42,6 @@ namespace Bus
             AdjustWheelForce();
             SmoothSteer();
             MatchMeshRotation();
-            
         }
         #endregion
         
@@ -52,7 +49,7 @@ namespace Bus
 
         private void SmoothSteer()
         {
-            _currentSteerAngle = Mathf.Lerp(_currentSteerAngle, _targetSteerAngle, Time.fixedDeltaTime * steerSpeed);
+            _currentSteerAngle = Mathf.Lerp(_currentSteerAngle, _targetSteerAngle, Time.fixedDeltaTime * SteerSpeed);
 
             foreach (var wheel in frontWheelColliders)
             {
