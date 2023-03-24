@@ -53,6 +53,33 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SteerLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""2f03daba-c85c-4de5-bb9c-36ad4d51bb4a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SteerRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""6adc668b-e722-43ed-99ee-978000248d2a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reverse"",
+                    ""type"": ""Button"",
+                    ""id"": ""9aa25431-0c40-4cee-aa2f-cc62b0b80f22"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -81,11 +108,44 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""dc559c90-d653-476f-889f-b3c2c4ffb5e6"",
-                    ""path"": ""<Keyboard>/s"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Decelerate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""056a9eac-7ca7-4d9c-b86d-d06bfda46b3e"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""SteerLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9dd6148c-ca37-431b-bf90-2c83ae3dd81d"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""SteerRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""93e317a4-877e-438c-89d9-371ea90066b4"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Reverse"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -676,6 +736,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Accelerate = m_Player.FindAction("Accelerate", throwIfNotFound: true);
         m_Player_Decelerate = m_Player.FindAction("Decelerate", throwIfNotFound: true);
+        m_Player_SteerLeft = m_Player.FindAction("SteerLeft", throwIfNotFound: true);
+        m_Player_SteerRight = m_Player.FindAction("SteerRight", throwIfNotFound: true);
+        m_Player_Reverse = m_Player.FindAction("Reverse", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -750,6 +813,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Accelerate;
     private readonly InputAction m_Player_Decelerate;
+    private readonly InputAction m_Player_SteerLeft;
+    private readonly InputAction m_Player_SteerRight;
+    private readonly InputAction m_Player_Reverse;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -757,6 +823,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         public InputAction @Look => m_Wrapper.m_Player_Look;
         public InputAction @Accelerate => m_Wrapper.m_Player_Accelerate;
         public InputAction @Decelerate => m_Wrapper.m_Player_Decelerate;
+        public InputAction @SteerLeft => m_Wrapper.m_Player_SteerLeft;
+        public InputAction @SteerRight => m_Wrapper.m_Player_SteerRight;
+        public InputAction @Reverse => m_Wrapper.m_Player_Reverse;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -775,6 +844,15 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @Decelerate.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDecelerate;
                 @Decelerate.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDecelerate;
                 @Decelerate.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDecelerate;
+                @SteerLeft.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSteerLeft;
+                @SteerLeft.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSteerLeft;
+                @SteerLeft.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSteerLeft;
+                @SteerRight.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSteerRight;
+                @SteerRight.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSteerRight;
+                @SteerRight.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSteerRight;
+                @Reverse.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnReverse;
+                @Reverse.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnReverse;
+                @Reverse.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnReverse;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -788,6 +866,15 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @Decelerate.started += instance.OnDecelerate;
                 @Decelerate.performed += instance.OnDecelerate;
                 @Decelerate.canceled += instance.OnDecelerate;
+                @SteerLeft.started += instance.OnSteerLeft;
+                @SteerLeft.performed += instance.OnSteerLeft;
+                @SteerLeft.canceled += instance.OnSteerLeft;
+                @SteerRight.started += instance.OnSteerRight;
+                @SteerRight.performed += instance.OnSteerRight;
+                @SteerRight.canceled += instance.OnSteerRight;
+                @Reverse.started += instance.OnReverse;
+                @Reverse.performed += instance.OnReverse;
+                @Reverse.canceled += instance.OnReverse;
             }
         }
     }
@@ -947,6 +1034,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnAccelerate(InputAction.CallbackContext context);
         void OnDecelerate(InputAction.CallbackContext context);
+        void OnSteerLeft(InputAction.CallbackContext context);
+        void OnSteerRight(InputAction.CallbackContext context);
+        void OnReverse(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
