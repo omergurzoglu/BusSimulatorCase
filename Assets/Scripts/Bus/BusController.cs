@@ -9,6 +9,8 @@ namespace Bus
     {
         #region Fields
         
+        [Header("Wheel References")]
+        
         [SerializeField] private WheelCollider[] allWheelColliders=new WheelCollider[4];
         [SerializeField] private WheelCollider[] frontWheelColliders=new WheelCollider[2];
         [SerializeField] private WheelCollider frontLeftWheel;
@@ -19,13 +21,16 @@ namespace Bus
         [SerializeField] private Transform frontRightWheelTransform;
         [SerializeField] private Transform backLeftWheelTransform;
         [SerializeField] private Transform backRightWheelTransform;
+        
+        [Header("Variables")]
         [SerializeField] private float accelerationForce;
         [SerializeField] private float decelerationForce;
         [SerializeField] private float maxSteerAngle=15f;
         
         private float _currentSteerAngle = 0f;
         private float _targetSteerAngle = 0f;
-        private float steerSpeed = 5f;
+        private const float steerSpeed = 5f;
+        
         private bool _acceleratePressed = false;
         private bool _deceleratePressed = false;
         private bool _reversePressed = false;
