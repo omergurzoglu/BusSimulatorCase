@@ -1,3 +1,5 @@
+using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +20,8 @@ namespace Objects.Bus
         [SerializeField] private Transform frontRightWheelTransform;
         [SerializeField] private Transform backLeftWheelTransform;
         [SerializeField] private Transform backRightWheelTransform;
+        [SerializeField] private Transform busLeftDoor;
+        [SerializeField] private Transform busRightDoor;
         
         [Header("Variables")]
         [SerializeField] private float accelerationForce;
@@ -31,17 +35,32 @@ namespace Objects.Bus
         private bool _acceleratePressed;
         private bool _deceleratePressed;
         private bool _reversePressed;
+        private bool _forceStopBus;
         public bool inBusStop;
-        
+
+        private Animator _animator;
+
+        [SerializeField]private PlayerInput playerInput;
+
+        public static event Action<Transform> BroadCastBusEntryPosForPassengers; 
+
         #endregion
 
         #region MonoBehavior
 
+        private void Awake()
+        {
+            _animator = GetComponent<Animator>();
+        }
+
         private void FixedUpdate()
         {
+            CheckIfTilted();
             AdjustWheelForce();
             SmoothSteer();
             MatchMeshRotation();
+            ApplyBreak();
+            
         }
         #endregion
         
@@ -73,6 +92,43 @@ namespace Objects.Bus
             }
         }
 
+        private void CheckIfTilted()
+        {
+            if(Vector3.Dot(transform.up, Vector3.down) > 0)
+            {
+                Debug.Log("bus tilted");
+                //do whatever
+            }
+        }
+
+        private void ApplyBreak()
+        {
+            if (_forceStopBus)
+            {
+                foreach (var wheel in allWheelColliders)
+                {
+                    wheel.brakeTorque = 5000f;
+                } 
+            }
+            
+        }
+
+        public void LockBrake(bool lockBus)
+        {
+            if (lockBus)
+            {
+                playerInput.enabled = false;
+                _forceStopBus = true;
+
+            }
+            else
+            {
+                _forceStopBus = false;
+                playerInput.enabled = true;
+            }
+        }
+
+       
         private void AdjustWheelMeshRotation(WheelCollider wheelCollider, Transform wheelVisualTransform)
         {
             wheelCollider.GetWorldPose(out Vector3 pos,out Quaternion rot);
@@ -86,6 +142,20 @@ namespace Objects.Bus
             AdjustWheelMeshRotation(frontLeftWheel,frontLeftWheelTransform);
             AdjustWheelMeshRotation(backLeftWheel,backLeftWheelTransform);
             AdjustWheelMeshRotation(backRightWheel,backRightWheelTransform);
+        }
+
+        public void SetDoorState(bool isOpen)
+        {
+            if (isOpen)
+            {
+                busLeftDoor.DOLocalRotate(new Vector3(0, -90, 0), 0.6f).SetEase(Ease.InBounce);
+                busRightDoor.DOLocalRotate(new Vector3(0, 90, 0), 0.6f).SetEase(Ease.InBounce);
+            }
+            else
+            {
+                busLeftDoor.DOLocalRotate(new Vector3(0, 0, 0), 0.6f).SetEase(Ease.InBounce);
+                busRightDoor.DOLocalRotate(new Vector3(0, 0, 0), 0.6f).SetEase(Ease.InBounce);
+            }
         }
         
         #endregion
@@ -145,8 +215,17 @@ namespace Objects.Bus
             
         }
         #endregion
-        
-        
+
+
+        private static void OnBroadCastBusEntryPosForPassengers(Transform obj)
+        {
+            BroadCastBusEntryPosForPassengers?.Invoke(obj);
+        }
+
+        public void SendDoorTransformToPassengers()
+        {
+            OnBroadCastBusEntryPosForPassengers(busLeftDoor);
+        }
     }
     
     
