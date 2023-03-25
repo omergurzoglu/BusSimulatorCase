@@ -17,9 +17,12 @@ namespace Managers
 
         private void Start() => DesignateNewSchedule();
 
-        private void DesignateNewSchedule()
+        public void DesignateNewSchedule()
         {
-            currentScheduledBusStop = busStops[Random.Range(0, busStops.Count)];
+            if (busStops is { Count: > 0 })
+            {
+                currentScheduledBusStop = busStops[Random.Range(0, busStops.Count)];
+            }
             OnBroadCastSchedule(currentScheduledBusStop);
         }
 

@@ -203,7 +203,7 @@ GameObject:
   - component: {fileID: 3163734367262326065}
   - component: {fileID: 4734252242352864635}
   - component: {fileID: 6577016807587826588}
-  - component: {fileID: 3444117613016966126}
+  - component: {fileID: -696545524531580322}
   m_Layer: 0
   m_Name: Passanger
   m_TagString: Untagged
@@ -240,7 +240,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c65cc526c6d80d74ea38ee70d0ef7258, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  busDoor: {fileID: 0}
+  agent: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!195 &4734252242352864635
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -251,7 +252,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 6
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -283,7 +284,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!136 &3444117613016966126
+--- !u!136 &-696545524531580322
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -291,7 +292,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 734181798659479613}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.5
   m_Height: 1

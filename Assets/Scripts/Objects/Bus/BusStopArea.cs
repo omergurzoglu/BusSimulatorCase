@@ -36,6 +36,7 @@ namespace Objects.Bus
                 bus.LockBrake(true);
                 SpawnPassengers();
                 bus.SendDoorTransformToPassengers();
+                bus.BusTakeOff();
             }
         }
         

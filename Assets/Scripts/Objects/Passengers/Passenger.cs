@@ -8,9 +8,8 @@ namespace Objects.Passengers
     {
         #region Fields
         private Transform _busDoor;
-        private NavMeshAgent _agent;
+        public NavMeshAgent agent;
         public Animator animator;
-        private bool _hasReachedDestination;
         private static readonly int IsMoving = Animator.StringToHash("IsMoving");
         #endregion
 
@@ -18,7 +17,7 @@ namespace Objects.Passengers
         private void Awake()
         {
             animator = GetComponent<Animator>();
-            _agent = GetComponent<NavMeshAgent>();
+            agent = GetComponent<NavMeshAgent>();
         }
         private void OnEnable() => BusController.BroadCastBusEntryPosForPassengers += GetBusDoorPosAndSetDestination;
         private void OnDisable() => BusController.BroadCastBusEntryPosForPassengers -= GetBusDoorPosAndSetDestination;
@@ -34,11 +33,15 @@ namespace Objects.Passengers
         private IEnumerator SetDestinationForPassenger()
         {
             yield return new WaitForSeconds(1f);
-            _agent.SetDestination(_busDoor.position);
+            agent.SetDestination(_busDoor.position);
             SetPassengerAnimation(false);
         }
 
         public void SetPassengerAnimation(bool isIdle) => animator.SetBool(IsMoving, !isIdle);
+        public void SetBusStopTargetForPassenger(BusStopArea busStopArea)
+        {
+            
+        }
 
         #endregion
         
@@ -46,6 +49,6 @@ namespace Objects.Passengers
 
     public interface IPassenger
     {
-        
+        public void SetBusStopTargetForPassenger(BusStopArea busStopArea);
     }
 }

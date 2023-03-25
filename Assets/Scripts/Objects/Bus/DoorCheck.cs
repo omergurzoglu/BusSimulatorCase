@@ -10,9 +10,10 @@ namespace Objects.Bus
         {
             if (other.TryGetComponent<Passenger>(out var passenger))
             {
-                BusStopArea.PassengerList.Remove(passenger);
-                Destroy(passenger.gameObject);
-                Debug.Log("passenger in");
+                //BusStopArea.PassengerList.Remove(passenger);
+                passenger.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+                passenger.transform.parent = transform;
+                passenger.SetPassengerAnimation(true);
                 //do whatever
             }
         }

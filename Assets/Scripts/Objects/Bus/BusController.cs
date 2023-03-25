@@ -1,5 +1,8 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
+using Managers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -37,35 +40,26 @@ namespace Objects.Bus
         private bool _reversePressed;
         private bool _forceStopBus;
         public bool inBusStop;
-
-        private Animator _animator;
-
+        
         [SerializeField]private PlayerInput playerInput;
-
-        public static event Action<Transform> BroadCastBusEntryPosForPassengers; 
-
+        public static event Action<Transform> BroadCastBusEntryPosForPassengers;
         #endregion
 
         #region MonoBehavior
-
-        private void Awake()
-        {
-            _animator = GetComponent<Animator>();
-        }
-
         private void FixedUpdate()
         {
-            CheckIfTilted();
+            //CheckIfTilted();
             AdjustWheelForce();
             SmoothSteer();
+            ForceStopBus();
+        }
+        private void Update()
+        {
             MatchMeshRotation();
-            ApplyBreak();
-            
         }
         #endregion
         
         #region MainMethods
-
         private void SmoothSteer()
         {
             _currentSteerAngle = Mathf.Lerp(_currentSteerAngle, _targetSteerAngle, Time.fixedDeltaTime * SteerSpeed);
@@ -96,21 +90,16 @@ namespace Objects.Bus
         {
             if(Vector3.Dot(transform.up, Vector3.down) > 0)
             {
-                Debug.Log("bus tilted");
-                //do whatever
+                //do whatever game over
             }
         }
-
-        private void ApplyBreak()
+        private void ForceStopBus()
         {
-            if (_forceStopBus)
+            if (!_forceStopBus) return;
+            foreach (var wheel in allWheelColliders)
             {
-                foreach (var wheel in allWheelColliders)
-                {
-                    wheel.brakeTorque = 5000f;
-                } 
+                wheel.brakeTorque = 5000f;
             }
-            
         }
 
         public void LockBrake(bool lockBus)
@@ -119,7 +108,6 @@ namespace Objects.Bus
             {
                 playerInput.enabled = false;
                 _forceStopBus = true;
-
             }
             else
             {
@@ -127,8 +115,7 @@ namespace Objects.Bus
                 playerInput.enabled = true;
             }
         }
-
-       
+        
         private void AdjustWheelMeshRotation(WheelCollider wheelCollider, Transform wheelVisualTransform)
         {
             wheelCollider.GetWorldPose(out Vector3 pos,out Quaternion rot);
@@ -157,7 +144,19 @@ namespace Objects.Bus
                 busRightDoor.DOLocalRotate(new Vector3(0, 0, 0), 0.6f).SetEase(Ease.InBounce);
             }
         }
-        
+        private static void OnBroadCastBusEntryPosForPassengers(Transform obj) => BroadCastBusEntryPosForPassengers?.Invoke(obj);
+        public void SendDoorTransformToPassengers() => OnBroadCastBusEntryPosForPassengers(busLeftDoor);
+
+        private IEnumerator BusTakeOffCoroutine()
+        {
+            yield return new WaitForSeconds(5f);
+            LockBrake(false);
+            SetDoorState(false);
+            LogisticManager.Instance.DesignateNewSchedule();
+        }
+
+        public void BusTakeOff() => StartCoroutine(BusTakeOffCoroutine());
+
         #endregion
 
         #region Input
@@ -217,15 +216,7 @@ namespace Objects.Bus
         #endregion
 
 
-        private static void OnBroadCastBusEntryPosForPassengers(Transform obj)
-        {
-            BroadCastBusEntryPosForPassengers?.Invoke(obj);
-        }
-
-        public void SendDoorTransformToPassengers()
-        {
-            OnBroadCastBusEntryPosForPassengers(busLeftDoor);
-        }
+       
     }
     
     
