@@ -1,4 +1,5 @@
 using System.Collections;
+using Interfaces;
 using Objects.Bus;
 using UnityEngine;
 using UnityEngine.AI;
@@ -43,12 +44,17 @@ namespace Objects.Passengers
             
         }
 
+        public void EnterBus()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ExitBus()
+        {
+            throw new System.NotImplementedException();
+        }
+
         #endregion
         
-    }
-
-    public interface IPassenger
-    {
-        public void SetBusStopTargetForPassenger(BusStopArea busStopArea);
     }
 }

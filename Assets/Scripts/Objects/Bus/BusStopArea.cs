@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using Interfaces;
 using Managers;
 using Objects.Passengers;
 using Unity.Mathematics;
@@ -8,14 +9,14 @@ using Random = UnityEngine.Random;
 
 namespace Objects.Bus
 {
-    public class BusStopArea : MonoBehaviour
+    public class BusStopArea : MonoBehaviour, IBusStopArea
     {
         #region Fields
 
         [SerializeField] private Passenger passenger;
 
         private Transform _thisBusStopTransform;
-        public static List<Passenger> PassengerList=new();
+        public static List<IPassenger> PassengerList = new();
 
         #endregion
 
@@ -28,7 +29,8 @@ namespace Objects.Bus
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent<BusController>(out var bus) && LogisticManager.Instance.currentScheduledBusStop==this)
+            if (other.TryGetComponent<BusController>(out var bus) &&
+                LogisticManager.Instance.currentScheduledBusStop == this)
             {
                 LogisticManager.Instance.busStops.Remove(this);
                 bus.inBusStop = true;
@@ -39,20 +41,34 @@ namespace Objects.Bus
                 bus.BusTakeOff();
             }
         }
-        
+
         #endregion
-        
+
         private void SpawnPassengers()
         {
             int randomSpawnCount = Random.Range(1, 3);
             for (int i = 0; i < randomSpawnCount; i++)
             {
-                 var newPassenger = Instantiate(passenger, new Vector3(Random.Range(1,5),0,Random.Range(1,5))+_thisBusStopTransform.position, 
+                var newPassenger = Instantiate(passenger,
+                    new Vector3(Random.Range(1, 5), 0, Random.Range(1, 5)) + _thisBusStopTransform.position,
                     quaternion.identity);
-                 PassengerList.Add(newPassenger);
-                 
-            } 
-            
+                PassengerList.Add(newPassenger);
+
+            }
+
         }
+
+        public void AddPassenger(IPassenger newPassenger)
+        {
+            PassengerList.Add(newPassenger);
+        }
+
+        public IPassenger RemovePassenger()
+        {
+            var thisPassenger = PassengerList[0];
+            PassengerList.RemoveAt(0);
+            return thisPassenger;
+        }
+        
     }
 }
