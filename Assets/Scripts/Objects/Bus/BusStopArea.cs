@@ -20,6 +20,7 @@ namespace Objects.Bus
                 else if (ScoreManager.Instance.timer<0)
                 {
                     ScoreManager.Instance.EditScore(-10);
+                    ScoreManager.Instance.EditTimer(45);
                 }
                 LogisticManager.Instance.DisEmbarkPassengers();
                 bus.SetDoorState(true);

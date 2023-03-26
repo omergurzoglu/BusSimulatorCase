@@ -9,19 +9,12 @@ namespace Managers
 {
     public class LogisticManager : Singleton<LogisticManager>
     {
-        #region Fields
         public List<BusStopArea> busStops=new();
         public BusStopArea currentScheduledBusStop;
         public List<Passenger> passengers = new();
         public event Action<BusStopArea> BroadCastSchedule;
-        #endregion
-
-        #region MonoBehavior
         private void Awake() => busStops = FindObjectsOfType<BusStopArea>().ToList();
         private void Start() => DesignateNewSchedule();
-        #endregion
-
-        #region MainMethods
         public void DesignateNewSchedule()
         {
             BusStopArea newScheduledBusStop;
@@ -42,14 +35,6 @@ namespace Managers
                 }
             }
         }
-        
-        #endregion
-        
-        
-       
-
-       
-        
     }
     
 }
