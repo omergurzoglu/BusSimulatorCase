@@ -8,26 +8,17 @@ namespace Managers
     public class WaypointManager : MonoBehaviour
     {
         [SerializeField] private RawImage image;
-        [SerializeField] private BusStopArea busStopTarget;
+        private BusStopArea _busStopTarget;
         private Camera _camera;
         private float _minX, _minY, _maxX, _maxY;
 
         private void Awake() => _camera=Camera.main;
 
-        private void OnEnable()
-        {
-            LogisticManager.Instance.BroadCastSchedule += GetNewWaypointForBusStop;
-        }
+        private void OnEnable() => LogisticManager.Instance.BroadCastSchedule += GetNewWaypointForBusStop;
 
-        private void OnDisable()
-        {
-            LogisticManager.Instance.BroadCastSchedule += GetNewWaypointForBusStop;
-        }
+        private void OnDisable() => LogisticManager.Instance.BroadCastSchedule -= GetNewWaypointForBusStop;
 
-        private void GetNewWaypointForBusStop(BusStopArea busStopArea)
-        {
-            busStopTarget = busStopArea;
-        }
+        private void GetNewWaypointForBusStop(BusStopArea busStopArea) => _busStopTarget = busStopArea;
 
         private void Start()
         {
@@ -36,14 +27,12 @@ namespace Managers
              _minY = image.GetPixelAdjustedRect().height / 2;
              _maxY = Screen.height - _minY;
         }
-        private void Update()
-        {
-             AdjustWaypoint();
-        }
+        private void Update() => AdjustWaypoint();
+
         private void AdjustWaypoint()
         {
-            Vector2 waypointPos = _camera.WorldToScreenPoint(busStopTarget.transform.position);
-            if(Vector3.Dot((busStopTarget.transform.position-transform.position),transform.forward)<0)
+            Vector2 waypointPos = _camera.WorldToScreenPoint(_busStopTarget.transform.position);
+            if(Vector3.Dot((_busStopTarget.transform.position-transform.position),transform.forward)<0)
             {
                 waypointPos.x = waypointPos.x < Screen.width / 2f ? _maxX : _minX;
             }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 using Managers;
 using UnityEngine;
@@ -39,7 +38,6 @@ namespace Objects.Bus
         private bool _deceleratePressed;
         private bool _reversePressed;
         private bool _forceStopBus;
-        public bool inBusStop;
         
         [SerializeField]private PlayerInput playerInput;
         public static event Action<Transform> BroadCastBusEntryPosForPassengers;
@@ -48,17 +46,14 @@ namespace Objects.Bus
         #region MonoBehavior
         private void FixedUpdate()
         {
-            //CheckIfTilted();
+            CheckIfTilted();
             AdjustWheelForce();
             SmoothSteer();
             ForceStopBus();
         }
-        private void Update()
-        {
-            MatchMeshRotation();
-        }
+        private void Update() => MatchMeshRotation();
+
         #endregion
-        
         #region MainMethods
         private void SmoothSteer()
         {
@@ -69,7 +64,6 @@ namespace Objects.Bus
                 wheel.steerAngle = _currentSteerAngle;
             }
         }
-        
         private void AdjustWheelForce()
         {
             float accelerationCheck = (_acceleratePressed || _reversePressed) ? 1f : 0f;
@@ -85,12 +79,14 @@ namespace Objects.Bus
                 wheel.brakeTorque=  decelerationForce*decelerationCheck;
             }
         }
-
         private void CheckIfTilted()
         {
             if(Vector3.Dot(transform.up, Vector3.down) > 0)
             {
-                //do whatever game over
+                transform.position += new Vector3(0, 5, 0);
+                Quaternion currentRotation = transform.rotation;
+                Quaternion newRotation = Quaternion.Euler(0, currentRotation.eulerAngles.y, 0);
+                transform.rotation = newRotation;
             }
         }
         private void ForceStopBus()
@@ -98,10 +94,9 @@ namespace Objects.Bus
             if (!_forceStopBus) return;
             foreach (var wheel in allWheelColliders)
             {
-                wheel.brakeTorque = 5000f;
+                wheel.brakeTorque = 4000f;
             }
         }
-
         public void LockBrake(bool lockBus)
         {
             if (lockBus)
@@ -115,14 +110,12 @@ namespace Objects.Bus
                 playerInput.enabled = true;
             }
         }
-        
         private void AdjustWheelMeshRotation(WheelCollider wheelCollider, Transform wheelVisualTransform)
         {
             wheelCollider.GetWorldPose(out Vector3 pos,out Quaternion rot);
             wheelVisualTransform.position = pos;
             wheelVisualTransform.rotation = rot;
         }
-
         private void MatchMeshRotation()
         {
             AdjustWheelMeshRotation(frontRightWheel,frontRightWheelTransform);
@@ -130,7 +123,6 @@ namespace Objects.Bus
             AdjustWheelMeshRotation(backLeftWheel,backLeftWheelTransform);
             AdjustWheelMeshRotation(backRightWheel,backRightWheelTransform);
         }
-
         public void SetDoorState(bool isOpen)
         {
             if (isOpen)
@@ -146,7 +138,6 @@ namespace Objects.Bus
         }
         private static void OnBroadCastBusEntryPosForPassengers(Transform obj) => BroadCastBusEntryPosForPassengers?.Invoke(obj);
         public void SendDoorTransformToPassengers() => OnBroadCastBusEntryPosForPassengers(busLeftDoor);
-
         private IEnumerator BusTakeOffCoroutine()
         {
             yield return new WaitForSeconds(5f);
@@ -154,40 +145,30 @@ namespace Objects.Bus
             SetDoorState(false);
             LogisticManager.Instance.DesignateNewSchedule();
         }
-
         public void BusTakeOff() => StartCoroutine(BusTakeOffCoroutine());
-
         #endregion
-
         #region Input
-        
         public void OnAccelerate(InputAction.CallbackContext context)
         {
             ContextCheckForAcceleration(context,ref _acceleratePressed);
         }
-
         public void OnDecelerate(InputAction.CallbackContext context)
         {
             ContextCheckForAcceleration(context, ref _deceleratePressed);
         }
-
         public void OnSteerLeft(InputAction.CallbackContext context)
         {
-            
             ContextCheckForSteer(context,-1);
-            
         }
         public void OnSteerRight(InputAction.CallbackContext context)
         {
             ContextCheckForSteer(context, 1);
             
         }
-
         public void OnReverse(InputAction.CallbackContext context)
         {
             ContextCheckForAcceleration(context,ref _reversePressed);
         }
-        
         private void ContextCheckForAcceleration(InputAction.CallbackContext context, ref bool contextBool)
         {
             if (context.performed)
@@ -199,10 +180,8 @@ namespace Objects.Bus
                 contextBool = false;
             }
         }
-
         private void ContextCheckForSteer(InputAction.CallbackContext context, int direction)
         {
-            
             if (context.performed)
             {
                 _targetSteerAngle = maxSteerAngle * direction;
@@ -211,7 +190,6 @@ namespace Objects.Bus
             {
                 _targetSteerAngle = 0;
             }
-            
         }
         #endregion
 

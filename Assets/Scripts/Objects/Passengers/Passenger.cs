@@ -1,17 +1,20 @@
 using System.Collections;
-using Interfaces;
+using Managers;
 using Objects.Bus;
 using UnityEngine;
 using UnityEngine.AI;
 namespace Objects.Passengers
 {
-    public class Passenger : MonoBehaviour,IPassenger
+    public class Passenger : MonoBehaviour
     {
         #region Fields
         private Transform _busDoor;
         public NavMeshAgent agent;
         public Animator animator;
+        public PassengerInOrOut passengerInOrOutState;
         private static readonly int IsMoving = Animator.StringToHash("IsMoving");
+        private SkinnedMeshRenderer _skinnedMeshRenderer;
+        public enum PassengerInOrOut { PassengerIn,PassengerOut }
         #endregion
 
         #region MonoBehavior
@@ -19,6 +22,7 @@ namespace Objects.Passengers
         {
             animator = GetComponent<Animator>();
             agent = GetComponent<NavMeshAgent>();
+            _skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
         }
         private void OnEnable() => BusController.BroadCastBusEntryPosForPassengers += GetBusDoorPosAndSetDestination;
         private void OnDisable() => BusController.BroadCastBusEntryPosForPassengers -= GetBusDoorPosAndSetDestination;
@@ -28,6 +32,7 @@ namespace Objects.Passengers
         #region MainMethods
         private void GetBusDoorPosAndSetDestination(Transform obj)
         {
+            if (passengerInOrOutState != PassengerInOrOut.PassengerIn) return;
             _busDoor = obj;
             StartCoroutine(SetDestinationForPassenger());
         }
@@ -37,21 +42,22 @@ namespace Objects.Passengers
             agent.SetDestination(_busDoor.position);
             SetPassengerAnimation(false);
         }
-
         public void SetPassengerAnimation(bool isIdle) => animator.SetBool(IsMoving, !isIdle);
-        public void SetBusStopTargetForPassenger(BusStopArea busStopArea)
+        
+        private IEnumerator DisembarkPassengerCoroutine()
         {
-            
+            agent.SetDestination(transform.localPosition + new Vector3(Random.Range(5,10), 0, Random.Range(5,10)));
+            SetMeshVisibility(true);
+            SetPassengerAnimation(false);
+            yield return new WaitForSeconds(3f);
+            LogisticManager.Instance.passengers.Remove(this);
+            Destroy(gameObject);
         }
+        public void DisembarkPassenger() => StartCoroutine(DisembarkPassengerCoroutine());
 
-        public void EnterBus()
+        public void SetMeshVisibility(bool visible)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public void ExitBus()
-        {
-            throw new System.NotImplementedException();
+            _skinnedMeshRenderer.enabled = visible;
         }
 
         #endregion

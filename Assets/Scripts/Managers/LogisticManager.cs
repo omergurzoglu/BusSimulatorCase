@@ -1,60 +1,56 @@
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Interfaces;
 using Objects.Bus;
+using Objects.Passengers;
 using Random = UnityEngine.Random;
 
 namespace Managers
 {
     public class LogisticManager : Singleton<LogisticManager>
     {
+        #region Fields
         public List<BusStopArea> busStops=new();
         public BusStopArea currentScheduledBusStop;
-        
+        public int passengerCountInsideBus;
+        public List<Passenger> passengers = new();
+        public event Action<BusStopArea> BroadCastSchedule;
+        #endregion
 
-        private IBusStopArea _currentStop;
-        private List<IBusStopArea> _passengers = new(); 
-        
-        public event Action<BusStopArea> BroadCastSchedule; 
-
+        #region MonoBehavior
         private void Awake() => busStops = FindObjectsOfType<BusStopArea>().ToList();
-
         private void Start() => DesignateNewSchedule();
+        #endregion
 
+        #region MainMethods
         public void DesignateNewSchedule()
         {
-            if (busStops is { Count: > 0 })
-            {
-                currentScheduledBusStop = busStops[Random.Range(0, busStops.Count)];
-            }
+            BusStopArea newScheduledBusStop;
+            do { newScheduledBusStop = busStops[Random.Range(0, busStops.Count)]; } 
+            while (newScheduledBusStop == currentScheduledBusStop);
+            currentScheduledBusStop = newScheduledBusStop;
             OnBroadCastSchedule(currentScheduledBusStop);
         }
+        private void OnBroadCastSchedule(BusStopArea obj) => BroadCastSchedule?.Invoke(obj);
 
-        private void OnBroadCastSchedule(BusStopArea obj)
+        public void DisEmbarkPassengers()
         {
-            BroadCastSchedule?.Invoke(obj);
+            foreach (var passenger in passengers)
+            {
+                if (passenger.passengerInOrOutState == Passenger.PassengerInOrOut.PassengerOut)
+                {
+                    passenger.DisembarkPassenger();
+                }
+            }
         }
-        // public void LoadPassenger()
-        // {
-        //     var passenger = _currentStop.RemovePassenger();
-        //     passenger.EnterBus();
-        //     _passengers.Add(passenger);
-        // }
-        //
-        // public void UnloadPassenger()
-        // {
-        //     var passenger = _passengers[0];
-        //     passenger.ExitBus();
-        //     _passengers.RemoveAt(0);
-        // }
+        
+        #endregion
+        
+        
+       
 
-
-        public void SetNextStop(IBusStopArea nextStop)
-        {
-            _currentStop = nextStop;
-        }
+       
+        
     }
     
 }

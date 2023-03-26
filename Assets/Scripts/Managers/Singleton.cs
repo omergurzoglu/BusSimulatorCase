@@ -26,8 +26,7 @@ namespace Managers
 
                         if (FindObjectsOfType<T>().Length > 1)
                         {
-                            Debug.LogError("[Singleton] There is more than one instance of '" + typeof(T) +
-                                           "' in the scene.");
+                            Debug.LogError("[Singleton] There is more than one instance of '" + typeof(T) + "' in the scene.");
                             return _instance;
                         }
 

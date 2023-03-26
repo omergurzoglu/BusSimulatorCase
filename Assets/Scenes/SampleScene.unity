@@ -441,7 +441,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 2023232609}
-  busStopTarget: {fileID: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -814,7 +813,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-7568
+  m_Name: pb_Mesh-7614
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -6181,6 +6180,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   busStops: []
   currentScheduledBusStop: {fileID: 0}
+  passengerCountInsideBus: 0
+  passengers: []
 --- !u!4 &1507086849
 Transform:
   m_ObjectHideFlags: 0
