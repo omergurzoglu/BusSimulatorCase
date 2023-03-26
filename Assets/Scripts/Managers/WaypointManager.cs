@@ -16,10 +16,13 @@ namespace Managers
 
         private void OnEnable() => LogisticManager.Instance.BroadCastSchedule += GetNewWaypointForBusStop;
 
-        private void OnDisable() => LogisticManager.Instance.BroadCastSchedule -= GetNewWaypointForBusStop;
-
-        private void GetNewWaypointForBusStop(BusStopArea busStopArea) => _busStopTarget = busStopArea;
-
+        private void OnDisable()
+        {
+            if (LogisticManager.Instance != null) 
+            {
+                LogisticManager.Instance.BroadCastSchedule -= GetNewWaypointForBusStop;
+            }
+        }
         private void Start()
         {
              _minX = image.GetPixelAdjustedRect().width / 2;
@@ -28,6 +31,7 @@ namespace Managers
              _maxY = Screen.height - _minY;
         }
         private void Update() => AdjustWaypoint();
+        private void GetNewWaypointForBusStop(BusStopArea busStopArea) => _busStopTarget = busStopArea;
 
         private void AdjustWaypoint()
         {

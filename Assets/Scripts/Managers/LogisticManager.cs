@@ -12,7 +12,6 @@ namespace Managers
         #region Fields
         public List<BusStopArea> busStops=new();
         public BusStopArea currentScheduledBusStop;
-        public int passengerCountInsideBus;
         public List<Passenger> passengers = new();
         public event Action<BusStopArea> BroadCastSchedule;
         #endregion

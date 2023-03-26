@@ -1,51 +1,33 @@
-
 using Managers;
 using Objects.Passengers;
-using Unity.Mathematics;
 using UnityEngine;
-using Random = UnityEngine.Random;
-
 namespace Objects.Bus
 {
     public class BusStopArea : MonoBehaviour
     {
-        #region Fields
         [SerializeField] private Passenger passenger;
-        private Transform _thisBusStopTransform;
-        #endregion
-
-        #region MonoBehavior
-
-        private void Awake() => _thisBusStopTransform = transform;
-
+        private IPassengerSpawnStrategy _passengerSpawnStrategy;
+        private void Start() => _passengerSpawnStrategy = new RandomPassengerSpawnStrategy();
         private void OnTriggerEnter(Collider other)
         {
             if (other.TryGetComponent<BusController>(out var bus) && LogisticManager.Instance.currentScheduledBusStop == this)
             {
+                if (ScoreManager.Instance.timer > 0)
+                {
+                    ScoreManager.Instance.EditScore(10);
+                    ScoreManager.Instance.EditTimer(45);
+                }
+                else if (ScoreManager.Instance.timer<0)
+                {
+                    ScoreManager.Instance.EditScore(-10);
+                }
                 LogisticManager.Instance.DisEmbarkPassengers();
                 bus.SetDoorState(true);
                 bus.LockBrake(true);
-                SpawnPassengers();
+                _passengerSpawnStrategy.SpawnPassengers(transform, () => Instantiate(passenger), LogisticManager.Instance.passengers);
                 bus.SendDoorTransformToPassengers();
                 bus.BusTakeOff();
             }
         }
-        #endregion
-        private void SpawnPassengers()
-        {
-            int randomSpawnCount = Random.Range(1, 4);
-            for (int i = 0; i < randomSpawnCount; i++)
-            {
-                var newPassenger = Instantiate(passenger, new Vector3(Random.Range(1, 5), 0, Random.Range(1, 5)) + _thisBusStopTransform.position, quaternion.identity);
-                newPassenger.passengerInOrOutState = Passenger.PassengerInOrOut.PassengerIn;
-                LogisticManager.Instance.passengers.Add(newPassenger);
-            }
-
-        }
-
-        
-
-       
-        
     }
 }

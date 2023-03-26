@@ -1,4 +1,3 @@
-using Managers;
 using Objects.Passengers;
 using UnityEngine;
 
@@ -10,7 +9,6 @@ namespace Objects.Bus
         {
             if (other.TryGetComponent<Passenger>(out var passenger))
             {
-                LogisticManager.Instance.passengerCountInsideBus++;
                 passenger.passengerInOrOutState = Passenger.PassengerInOrOut.PassengerOut;
                 passenger.SetMeshVisibility(false);
                 passenger.agent.ResetPath();

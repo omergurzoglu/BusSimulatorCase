@@ -8,22 +8,16 @@ namespace Objects.Passengers
     public class Passenger : MonoBehaviour
     {
         #region Fields
+        [SerializeField]private SkinnedMeshRenderer skinnedMeshRenderer;
         private Transform _busDoor;
         public NavMeshAgent agent;
         public Animator animator;
         public PassengerInOrOut passengerInOrOutState;
         private static readonly int IsMoving = Animator.StringToHash("IsMoving");
-        private SkinnedMeshRenderer _skinnedMeshRenderer;
         public enum PassengerInOrOut { PassengerIn,PassengerOut }
         #endregion
 
         #region MonoBehavior
-        private void Awake()
-        {
-            animator = GetComponent<Animator>();
-            agent = GetComponent<NavMeshAgent>();
-            _skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
-        }
         private void OnEnable() => BusController.BroadCastBusEntryPosForPassengers += GetBusDoorPosAndSetDestination;
         private void OnDisable() => BusController.BroadCastBusEntryPosForPassengers -= GetBusDoorPosAndSetDestination;
         
@@ -55,10 +49,7 @@ namespace Objects.Passengers
         }
         public void DisembarkPassenger() => StartCoroutine(DisembarkPassengerCoroutine());
 
-        public void SetMeshVisibility(bool visible)
-        {
-            _skinnedMeshRenderer.enabled = visible;
-        }
+        public void SetMeshVisibility(bool visible) => skinnedMeshRenderer.enabled = visible;
 
         #endregion
         
