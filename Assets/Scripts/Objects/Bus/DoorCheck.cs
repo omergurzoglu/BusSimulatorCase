@@ -3,6 +3,10 @@ using UnityEngine;
 
 namespace Objects.Bus
 {
+    /// <summary>
+    /// Locks the passengers when they get close to the busDoor
+    /// Sets them as OutGoingPassengers
+    /// </summary>
     public class DoorCheck : MonoBehaviour
     {
         private void OnTriggerEnter(Collider other)

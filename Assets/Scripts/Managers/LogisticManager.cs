@@ -13,10 +13,17 @@ namespace Managers
         public BusStopArea currentScheduledBusStop;
         public List<Passenger> passengers = new();
         public event Action<BusStopArea> BroadCastSchedule;
-        private void Awake() => busStops = FindObjectsOfType<BusStopArea>().ToList();
+        private void Awake()
+        {
+            //Get all busStops in the scene
+            busStops = FindObjectsOfType<BusStopArea>().ToList();
+        }
+
         private void Start() => DesignateNewSchedule();
         public void DesignateNewSchedule()
         {
+            //Get a different BusStop each time the method is called, and send currentScheduledBusStop to subscribers
+            
             BusStopArea newScheduledBusStop;
             do { newScheduledBusStop = busStops[Random.Range(0, busStops.Count)]; } 
             while (newScheduledBusStop == currentScheduledBusStop);
@@ -27,6 +34,8 @@ namespace Managers
 
         public void DisEmbarkPassengers()
         {
+            //Loop through the passenger lists, if passenger is leaving the bus , disembark
+            
             foreach (var passenger in passengers)
             {
                 if (passenger.passengerInOrOutState == Passenger.PassengerInOrOut.PassengerOut)

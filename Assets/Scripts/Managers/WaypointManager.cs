@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 namespace Managers
 {
+    /// <summary>
+    /// Repositions the waypoint with respect to the current scheduled busStop
+    /// </summary>
     public class WaypointManager : MonoBehaviour
     {
         [SerializeField] private RawImage image;
@@ -31,11 +34,17 @@ namespace Managers
              _maxY = Screen.height - _minY;
         }
         private void Update() => AdjustWaypoint();
+        
+        //Get the new busStop whenever the event is raised
         private void GetNewWaypointForBusStop(BusStopArea busStopArea) => _busStopTarget = busStopArea;
 
         private void AdjustWaypoint()
         {
+            //Reposition waypoints transform via WorldToScreenPoint method every frame
             Vector2 waypointPos = _camera.WorldToScreenPoint(_busStopTarget.transform.position);
+            
+            
+            //If the waypoint is outside the bounds of canvas, hold the waypoint in the edge of screen
             if(Vector3.Dot((_busStopTarget.transform.position-transform.position),transform.forward)<0)
             {
                 waypointPos.x = waypointPos.x < Screen.width / 2f ? _maxX : _minX;

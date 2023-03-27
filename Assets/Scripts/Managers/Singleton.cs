@@ -1,12 +1,13 @@
 namespace Managers
 {
     using UnityEngine;
-
+   
+    ///<summary>Basic singleton template class</summary>
     public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         private static T _instance;
         private static object _lock = new object();
-
+        
         public static T Instance
         {
             get

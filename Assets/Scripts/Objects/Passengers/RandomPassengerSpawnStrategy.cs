@@ -5,6 +5,9 @@ using Random = UnityEngine.Random;
 
 namespace Objects.Passengers
 {
+    /// <summary>
+    /// Class responsible for spawning 
+    /// </summary>
     public class RandomPassengerSpawnStrategy : IPassengerSpawnStrategy
     {
         public void SpawnPassengers(Transform busStopTransform, Func<Passenger> passengerFactory, List<Passenger> passengers)

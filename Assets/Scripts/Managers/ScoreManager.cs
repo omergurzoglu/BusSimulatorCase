@@ -7,7 +7,6 @@ namespace Managers
     public class ScoreManager : Singleton<ScoreManager>
     {
         #region Fields
-
         [SerializeField] private TextMeshProUGUI scoreText;
         [SerializeField] private TextMeshProUGUI timerText;
         public int score;
@@ -27,12 +26,13 @@ namespace Managers
         {
             while (true)
             {
-                EditTimer(-1);
+                //Clock
+                AddToTimer(-1);
                 yield return _countDownSecond;
             }
         }
 
-        public void EditTimer(int newTime)
+        public void AddToTimer(int newTime)
         {
             timer += newTime;
             timerText.text= ConvertToClockFormat(timer);
@@ -44,7 +44,7 @@ namespace Managers
             return $"{minutes:00}:{seconds:00}";
         }
 
-        public void EditScore(int newScore)
+        public void AddToScore(int newScore)
         {
             score += newScore;
             scoreText.text = score.ToString();
@@ -54,12 +54,15 @@ namespace Managers
         {
             while (true)
             {
-                EditScore(-1);
+                AddToScore(-1);
                 yield return _countDownSecond;
             }
         }
+        
+        //Gets called if bus is off road 
         public void StartPenalty() => _penaltyCoroutine = StartCoroutine(PenaltyCoroutine());
-
+        
+        //Gets called if bus in back on road
         public void StopPenalty() => StopCoroutine(_penaltyCoroutine);
 
       

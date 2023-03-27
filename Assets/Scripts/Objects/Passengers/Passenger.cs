@@ -26,6 +26,8 @@ namespace Objects.Passengers
         #region MainMethods
         private void GetBusDoorPosAndSetDestination(Transform obj)
         {
+            //If the passenger is embarking , move to the door position
+            
             if (passengerInOrOutState != PassengerInOrOut.PassengerIn) return;
             _busDoor = obj;
             StartCoroutine(SetDestinationForPassenger());
@@ -40,10 +42,17 @@ namespace Objects.Passengers
         
         private IEnumerator DisembarkPassengerCoroutine()
         {
+            //Send outGoing passenger to random point
             agent.SetDestination(transform.localPosition + new Vector3(Random.Range(5,10), 0, Random.Range(5,10)));
+            
+            //Set back visuals
             SetMeshVisibility(true);
             SetPassengerAnimation(false);
+            
+            //Delay before destroying the passenger
             yield return new WaitForSeconds(3f);
+            
+            //Remove from the passenger list
             LogisticManager.Instance.passengers.Remove(this);
             Destroy(gameObject);
         }
